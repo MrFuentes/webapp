@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+    Send
+  </title>
+  <html>
+  <head>
+      <title>
+          Test Site
+      </title>
+      {% block navbar %}
+        {{nav.mynavbar.render()}}
+      {% endblock %}
+  </head>
+  <body>
+    <h2>
+          This is the Send Page
+    </h2>
+    <form action="{{ url_for('submit_request') }}" method="post">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+      <textarea name='text'></textarea><br>
+      <input type="submit" value="Send">
+    </form>
+  </body>
+</html>

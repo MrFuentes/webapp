@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>
+        Test Site
+    </title>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class=flashes>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    {% block navbar %}
+      {{nav.mynavbar.render()}}
+    {% endblock %}
+</head>
+<body>
+<h2>
+        Hello world! This is a Test
+    </h2>
+    <form action="{{ url_for('submit') }}" method="post">
+      <textarea name='text'></textarea><br>
+      <input type="submit" value="Convert">
+    </form>
+</body>
+</html>
