@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<hmtl>
+<head>
+  <title>
+    SatTracker
+  </title>
+</head>
+
+<style type="text/css">
+body {
+  width: 99%;
+}
+
+#Recieve {
+  display:inline-block;
+  margin-right:30%;
+  float:left;
+  padding-left: 1%;
+}
+#Data {
+}
+
+#Send {
+  border-left: 2px solid #ff0000;
+  display:inline-block;
+}
+#transmit {
+  padding-left: 2%;
+}
+#Msgtype {
+  padding-left: 2%;
+  display:flex;
+  padding-bottom:5%;
+}
+#checks {
+  float:left;
+  display:inline-block;
+  position:relative;
+  left:50%;
+  top:10px;
+}
+#payload {
+  padding-left: 2%;
+  padding-top: 5%;
+}
+#button {
+  height: 45px;
+  width: 100%;
+}
+</style>
+
+<body>
+  <div id="Recieve">
+    <h2>
+      Recieve
+    </h2>
+    {% if test %}
+      <div id="Data">
+        <p>
+          Payload: {{ data }}
+        </p>
+        <p>
+          Timestamp: test
+        </p>
+        <p>
+          Msg ID: test
+        </p>
+        <p>
+          Message Type: test
+        </p>
+        <p>
+          Signal quality: test
+        </p>
+        <p>
+          Latitude: test
+        </p>
+        <p>
+          Longitude: test
+        </p>
+        {% if parsed.Unstructured %}
+            <p>
+            Unstructured Data: test
+            </p>
+        {% endif %}
+      </div>
+    {% else %}
+      <div id="CRCFAIL">
+        <p>
+          CRC failed.  Please try sending a request again.
+        </p>
+      </div>
+    {% endif %}
+  </div>
+  <div id="Send" aling="center">
+    <div id="transmit">
+      <h2>
+        Transmit
+      </h2>
+    </div>
+    <div id="Msgtype">
+      <p>
+        Message Type:
+      </p>
+      <div id="checks">
+        <input type="radio" name="msgtype" value="Request Location" checked="checked">Request Location<br>
+        <input type="radio" name="msgtype" value="Acknowledge">Acknowledge<br><br>
+      </div>
+    </div>
+    <div id="payload">
+      <p>
+        Payload text entry:
+      </p>
+      <div id="TextEntry">
+        <form action="{{ url_for('submit') }}" method="post">
+          <textarea id="payload" rows="10" cols="80"></textarea><br>
+          <input id="button" type="submit" value="send" >
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
