@@ -77,11 +77,6 @@ body {
         <p>
           Longitude: test
         </p>
-        {% if parsed.Unstructured %}
-            <p>
-            Unstructured Data: test
-            </p>
-        {% endif %}
       </div>
     {% else %}
       <div id="CRCFAIL">
@@ -102,8 +97,10 @@ body {
         Message Type:
       </p>
       <div id="checks">
-        <input type="radio" name="msgtype" value="Request Location" checked="checked">Request Location<br>
-        <input type="radio" name="msgtype" value="Acknowledge">Acknowledge<br><br>
+        <form action="{{ url_for('submit')  }}" method="post">
+          <input type="radio" name="msgtype" value="Request Location" checked="checked">Request Location<br>
+          <input type="radio" name="msgtype" value="Acknowledge">Acknowledge<br><br>
+        </form>
       </div>
     </div>
     <div id="payload">
@@ -112,7 +109,7 @@ body {
       </p>
       <div id="TextEntry">
         <form action="{{ url_for('submit') }}" method="post">
-          <textarea id="payload" rows="10" cols="80"></textarea><br>
+          <textarea id="payload" name="payload" rows="10" cols="80"></textarea><br>
           <input id="button" type="submit" value="send" >
         </form>
       </div>
