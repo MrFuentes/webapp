@@ -26,7 +26,7 @@ def check_data():
     iridium_latitude = request.form["iridium_latitude"]
     iridium_longitude = request.form["iridium_longitude"]
     iridium_cep = request.form["iridium_cep"]
-    data = request.form["data"]
+    global data = request.form["data"]
     print("ok")
     return data
 
@@ -73,15 +73,13 @@ class ParseToHex(object):
         self.TimeStamp = year + month + day + hour + minute + second
         self.crc = None
 
-
 app = Flask(__name__)
 
 @app.route('/', methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        data = check_data()
-        return render_template("index.html", test=True, data=data)
-    return render_template("index.html", test=False)
+        return "ok"
+    return render_template("index.html", test=True, data=request.form.get("data"))
 
 @app.route("/", methods=["GET", "POST"])
 def submit():
@@ -91,3 +89,6 @@ def submit():
     return render_template("index.html", test=True, data=data)
 
 app.secret_key = "secret"
+
+if __name__ == "__main__":
+    app.run()
