@@ -12,8 +12,10 @@ body {
 }
 
 #Recieve {
+  background-color:blue;
+  overflow-wrap: break-word;
   display:inline-block;
-  margin-right:30%;
+  width: 50%;
   float:left;
   padding-left: 1%;
 }
@@ -57,25 +59,21 @@ body {
     {% if test %}
       <div id="Data">
         <p>
-          Payload: {{ data }}
+          Payload: {{ payload }}
+        <p>
+          Timestamp: {{ timestamp }}
         </p>
         <p>
-          Timestamp: test
+          Msg ID: {{ msgID }}
         </p>
         <p>
-          Msg ID: test
+          Message Type: {{ msgType }}
         </p>
         <p>
-          Message Type: test
+          Signal quality: {{ signal }}
         </p>
         <p>
-          Signal quality: test
-        </p>
-        <p>
-          Latitude: test
-        </p>
-        <p>
-          Longitude: test
+          Latitude, Longitude: {{ latitude }}, {{ Longitude }}
         </p>
       </div>
     {% else %}

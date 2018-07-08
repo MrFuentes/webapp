@@ -44,11 +44,14 @@ class ParseFromHex(object):
         self.TimeStamp = "{:02d}:{:02d}:{:02d}:{:02d}:{:02d}:{:02d}".format(Year, Month, Day, Hour, Min, Sec)
         self.MsgType = int(data[22:24], 16)
         self.DeviceReg = bytearray.fromhex(data[24:40]).decode()
-        self.GPSPos = float.fromhex(data[38:54])
-        self.GPSQuality = int(data[54:56], 16)
-        self.UnstructLen = int(data[56:58], 16)
-        if ((self.MsgLen-2) - 58) > 0:
-            self.Unstructured = int(data[58: self.MsgLen-2], 16)
+        self.GPSLatitude = float.fromhex(data[38:46])
+        self.GPSLongitude = float.fromhex(data[46:54])
+        self.GPSQuality = int(data[54:55], 16)
+        self.UnstructLen = int(data[55:56], 16)
+        if ((self.MsgLen-2) - 56) > 0:
+            self.Unstructured = int(data[56: self.MsgLen-2], 16)
+        else:
+            self.Unstructured = None
         self.crc = int(data[self.MsgLen-1], 16)
 
 class ParseToHex(object):
@@ -77,9 +80,11 @@ app = Flask(__name__)
 
 @app.route('/', methods=["GET", "POST"])
 def index():
-    if request.method == "POST":
-        return "ok"
-    return render_template("index.html", test=True, data=request.form.get("data"))
+    try:
+        data = check_data()
+        return render_template("index.html", test=True, data=data)
+    except:
+        return render_template("index.html", test=False)
 
 @app.route("/", methods=["GET", "POST"])
 def submit():
