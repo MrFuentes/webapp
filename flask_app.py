@@ -1,6 +1,14 @@
 from flask import Flask, request, render_template, flash
 import cgi, time, datetime
+#todo:
+#implement crc
+#set up port forwarding
+#fix floats
+#fix gps signal quality
+#format lat, long
 
+a = [None]
+#4bit
 crc8_Table = [
 0x00, 0x07, 0x0E, 0x09, 0x1C, 0x1B, 0x12, 0x15, 0x38, 0x3F, 0x36, 0x31, 0x24, 0x23, 0x2A, 0x2D,
 0x70, 0x77, 0x7E, 0x79, 0x6C, 0x6B, 0x62, 0x65, 0x48, 0x4F, 0x46, 0x41, 0x54, 0x53, 0x5A, 0x5D,
@@ -20,19 +28,24 @@ crc8_Table = [
 0xDE, 0xD9, 0xD0, 0xD7, 0xC2, 0xC5, 0xCC, 0xCB, 0xE6, 0xE1, 0xE8, 0xEF, 0xFA, 0xFD, 0xF4, 0xF3]
 
 def check_data():
+    global a
     imei = request.form["imei"]
     momsn = request.form["momsn"]
     transmit_time = request.form["transmit_time"]
     iridium_latitude = request.form["iridium_latitude"]
     iridium_longitude = request.form["iridium_longitude"]
     iridium_cep = request.form["iridium_cep"]
-    global data = request.form["data"]
+    data = request.form["data"]
+    a.append(data)
     print("ok")
     return data
 
 class ParseFromHex(object):
 
     def __init__(self, data):
+        lat = data[38:46]
+        long = data[46:54]
+
         self.MsgLen = int(data[0:4], 16)
         self.MsgID = int(data[4:10], 16)
         Year = int(data[10:12], 16)
@@ -44,8 +57,8 @@ class ParseFromHex(object):
         self.TimeStamp = "{:02d}:{:02d}:{:02d}:{:02d}:{:02d}:{:02d}".format(Year, Month, Day, Hour, Min, Sec)
         self.MsgType = int(data[22:24], 16)
         self.DeviceReg = bytearray.fromhex(data[24:40]).decode()
-        self.GPSLatitude = float.fromhex(data[38:46])
-        self.GPSLongitude = float.fromhex(data[46:54])
+        self.GPSLatitude = float.fromhex()
+        self.GPSLongitude = float.fromhex()
         self.GPSQuality = int(data[54:55], 16)
         self.UnstructLen = int(data[55:56], 16)
         if ((self.MsgLen-2) - 56) > 0:
@@ -53,6 +66,13 @@ class ParseFromHex(object):
         else:
             self.Unstructured = None
         self.crc = int(data[self.MsgLen-1], 16)
+
+    def swap_endian(self, lat, long):
+        tmp = lat.decode("hex")
+        tmp = tmp[::-1]
+        lat_conv = tmp.encode("hex")
+        tmp = long.decode("hex")
+        tmp = tmp[::-1]
 
 class ParseToHex(object):
 
@@ -84,7 +104,7 @@ def index():
         data = check_data()
         return render_template("index.html", test=True, data=data)
     except:
-        return render_template("index.html", test=False)
+        return render_template("index.html", test=True)
 
 @app.route("/", methods=["GET", "POST"])
 def submit():
