@@ -3,9 +3,27 @@ import cgi, time, datetime
 #todo:
 #implement crc
 #set up port forwarding
-#fix floats
-#fix gps signal quality
-#format lat, long
+
+def hex_to_float(hex):
+    little_endian = str(hex[6:] + hex[4:6] + hex[2:4] + hex[0:2])
+    binary = [bin(int(x, 16))[2:].zfill(4) for x in little_endian]
+    binary_str = ''.join(binary)
+    sign = binary_str[0]
+    exponent = 2 ** (int(binary_str[1:9], 2) - 127)
+    mantissa = binary_str[9:]
+    i = -1
+    pos = []
+    for x in mantissa:
+        if x == "1":
+            pos.append(i)
+        i -= 1
+    sum = 1
+    for x in pos:
+        sum += 2 ** x
+    if sign == 1:
+        return(-1 * exponent * sum)
+    else:
+        return(exponent * sum)
 
 a = [None]
 #4bit
@@ -57,22 +75,15 @@ class ParseFromHex(object):
         self.TimeStamp = "{:02d}:{:02d}:{:02d}:{:02d}:{:02d}:{:02d}".format(Year, Month, Day, Hour, Min, Sec)
         self.MsgType = int(data[22:24], 16)
         self.DeviceReg = bytearray.fromhex(data[24:40]).decode()
-        self.GPSLatitude = float.fromhex()
-        self.GPSLongitude = float.fromhex()
-        self.GPSQuality = int(data[54:55], 16)
-        self.UnstructLen = int(data[55:56], 16)
+        self.GPSLatitude = hex_to_float(data[40:48])
+        self.GPSLongitude = hex_to_float(data[48:56])
+        self.GPSQuality = int(data[56:58], 16)
+        self.UnstructLen = int(data[58:60], 16)
         if ((self.MsgLen-2) - 56) > 0:
             self.Unstructured = int(data[56: self.MsgLen-2], 16)
         else:
             self.Unstructured = None
-        self.crc = int(data[self.MsgLen-1], 16)
-
-    def swap_endian(self, lat, long):
-        tmp = lat.decode("hex")
-        tmp = tmp[::-1]
-        lat_conv = tmp.encode("hex")
-        tmp = long.decode("hex")
-        tmp = tmp[::-1]
+        self.crc = int(data[-2:], 16)
 
 class ParseToHex(object):
 
