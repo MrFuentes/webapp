@@ -58,22 +58,27 @@ body {
     {% if test %}
       <div id="Data">
         <p>
-          Payload: {{ payload }}
+          Payload: {{ raw_data }}
         <p>
-          Timestamp: {{ timestamp }}
+          Timestamp: {{ data.TimeStamp }}
         </p>
         <p>
-          Msg ID: {{ msgID }}
+          Msg ID: {{ data.MsgID }}
         </p>
         <p>
-          Message Type: {{ msgType }}
+          Message Type: {{ data.MsgType }}
         </p>
         <p>
-          Signal quality: {{ signal }}
+          Signal quality: {{ data.GPSQuality }}
         </p>
         <p>
-          Latitude, Longitude: {{ latitude }}, {{ Longitude }}
+          Latitude, Longitude: {{ data.GPSLatitude }}, {{ data.GPSLongitude }}
         </p>
+        {% if data.UnstructLen > 0 %}
+          <p>
+            Unstructured: {{ data.Unstructured }}
+          </p>
+        {% endif %}
       </div>
     {% else %}
       <div id="CRCFAIL">
@@ -95,8 +100,8 @@ body {
       </p>
       <div id="checks">
         <form action="{{ url_for('submit')  }}" method="post">
-          <input type="radio" name="msgtype" value="Request Location" checked="checked">Request Location<br>
-          <input type="radio" name="msgtype" value="Acknowledge">Acknowledge<br><br>
+          <input type="radio" name="msgtype" value="1" checked="checked">Request Location<br>
+          <input type="radio" name="msgtype" value="3">Acknowledge<br><br>
         </form>
       </div>
     </div>
